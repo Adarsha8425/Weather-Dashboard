@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Weather DashBoard</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f4;
+    }
+
+    .bg-container {
+      background-image: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8d2VhdGhlciUyMGJhY2tncm91bmR8ZW58MHx8MHx8fDA%3D&w=1000&q=80');
+      background-size: cover;
+      background-position: center;
+      min-height: 100vh;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: center;
+    }
+
+    header {
+      background-color: #4CAF50;
+      color: white;
+      width: 100%;
+      padding: 15px 0;
+      text-align: center;
+      font-size: 1.8rem;
+      font-weight: bold;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    }
+
+    .container {
+      width: 90%;
+      max-width: 600px;
+      margin-top: 30px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* Search Bar */
+    .search-section {
+      width: 100%;
+      text-align: center;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .search-section input[type="text"] {
+      padding: 10px;
+      width: 70%;
+      max-width: 300px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+
+    .search-section button {
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .search-section button:hover {
+      background-color: #45a049;
+    }
+    .weather-display {
+      margin-top: 30px;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+    }
+
+    .weather-card {
+      background: rgba(255, 255, 255, 0.85);
+      border-radius: 15px;
+      padding: 20px 25px;
+      text-align: center;
+      width: 100%;
+      max-width: 350px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .weather-card h2 {
+      font-size: 1.4rem;
+      margin-bottom: 10px;
+    }
+
+    .weather-card h3 {
+      font-size: 1.2rem;
+      margin-bottom: 15px;
+    }
+
+    .weather-card p {
+      font-size: 1rem;
+      margin: 6px 0;
+    }
+
+    .weather-icon {
+      width: 80px;
+      height: 80px;
+      margin: 10px auto;
+      display: block;
+      text-align: center;
+      justify-content: center;
+    }
+
+  </style>
+</head>
+
+<body>
+  <div class="bg-container">
+    <header>Weather DashBoard</header>
+
+    <div class="container">
+      <!-- Search Section -->
+      <section class="search-section">
+        <input type="text" id="cityInput" placeholder="Enter city name" />
+        <button id="searchButton">Search</button>
+      </section>
+
+      <!-- Weather Info -->
+      <section class="weather-display">
+        <div class="weather-card">
+          <h2 id="cityName">City Name: --</h2>
+          <img id="weatherIcon" src="" alt="Weather Icon" class = "weather-icon" style="display:none;"/>
+          <h3 id="weatherDescription">Weather Description: --</h3>
+          <p id="temperature">Temperature: --°C</p>
+          <p id="humidity">Humidity: --%</p>
+          <p id="windSpeed">Wind Speed: -- km/h</p>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    const cityInput = document.getElementById('cityInput');
+    const searchButton = document.getElementById('searchButton');
+    const cityName = document.getElementById('cityName');
+    const weatherDescription = document.getElementById('weatherDescription');
+    const temperature = document.getElementById('temperature');
+    const humidity = document.getElementById('humidity');
+    const windSpeed = document.getElementById('windSpeed');
+    const weatherIcon = document.getElementById('weatherIcon');
+
+    function fetchWeatherData(city) {
+      const apiKey = '7890866a17fb4974b1941912252910';
+      const apiUrl = `https://api.weatherapi.com/v1/current.json?key=${apiKey}&q=${city}&aqi=no`;
+
+      fetch(apiUrl)
+        .then(response => response.json())
+        .then(data => {
+          cityName.textContent = `City Name: ${data.location.name}, ${data.location.country}`;
+          weatherDescription.textContent = `Weather Description: ${data.current.condition.text}`;
+          temperature.textContent = `Temperature: ${data.current.temp_c}°C`;
+          humidity.textContent = `Humidity: ${data.current.humidity}%`;
+          windSpeed.textContent = `Wind Speed: ${data.current.wind_kph} km/h`;
+          const iconUrl = `https:${data.current.condition.icon}`;
+          weatherIcon.src = iconUrl;
+          weatherIcon.style.display = "block";
+
+        })
+        .catch(error => {
+          alert("City not found or network issue!");
+          console.error(error);
+        });
+    }
+
+    searchButton.addEventListener("click", () => {
+      const city = cityInput.value.trim();
+      if (city) {
+        fetchWeatherData(city);
+      } else {
+        alert("Please enter a city name.");
+      }
+    });
+  </script>
+</body>
+</html>
